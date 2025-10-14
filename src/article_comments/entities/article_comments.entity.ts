@@ -1,12 +1,10 @@
 import { Article } from "src/articles/entities/article.entity";
+import { BaseEntity } from "src/common/entities/base.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class ArticleComments {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class ArticleComments extends BaseEntity {
   @ManyToOne(() => User, (user) => user.userArticleComments)
   @JoinColumn({ name: 'user_id' })
   user: User;
@@ -17,13 +15,4 @@ export class ArticleComments {
 
   @Column()
   comment: string;
-
-  @Column({ name: 'created_at' })
-  createdAt: Date;
-
-  @Column({ name: 'updated_at' })
-  updatedAt: Date;
-
-  @Column({ name: 'deleted_at' })
-  deletedAt: Date;
 }

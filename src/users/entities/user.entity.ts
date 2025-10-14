@@ -1,13 +1,11 @@
 import { ArticleComments } from "src/article_comments/entities/article_comments.entity";
 import { Article } from "src/articles/entities/article.entity";
+import { BaseEntity } from "src/common/entities/base.entity";
 import { UserArticleFavorites } from "src/user_article_favorites/entities/user_article_favorites.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column()
   name: string;
 
@@ -22,12 +20,6 @@ export class User {
 
   @Column({ type: 'bytea', nullable: true })
   avatar?: Buffer;
-
-  @Column({ name: 'created_at' })
-  createdAt: Date;
-
-  @Column({ name: 'updated_at' })
-  updatedAt: Date;
 
   @OneToMany(() => Article, (article) => article.author)
   articles: Article[];

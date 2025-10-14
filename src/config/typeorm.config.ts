@@ -1,9 +1,6 @@
 import 'dotenv/config';
 import { DataSource } from 'typeorm';
-import { User } from '../users/entities/user.entity';
-import { Article } from '../articles/entities/article.entity';
-import { ArticleComments } from '../article_comments/entities/article_comments.entity';
-import { UserArticleFavorites } from '../user_article_favorites/entities/user_article_favorites.entity';
+import { join } from 'path';
 
 export default new DataSource({
   type: 'postgres',
@@ -12,8 +9,8 @@ export default new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
-  entities: [User, Article, ArticleComments, UserArticleFavorites],
-  migrations: ['dist/migrations/*.js'],
+  entities: [join(__dirname, '../**/*.entity.{ts,js}')],
+  migrations: [join(__dirname, '../migrations/*.{ts,js}')],
   synchronize: false,
 });
 
