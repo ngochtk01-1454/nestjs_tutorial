@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType } from '@nestjs/common';
+import { ValidationPipe, VersioningType, BadRequestException } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { API_CONSTANTS } from './constants/api.constants';
 import { swaggerConfig, swaggerSetupOptions } from './config/swagger.config';
+import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { validationExceptionFactory } from './common/exceptions/validation-exception.factory';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,6 +19,7 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
+      exceptionFactory: validationExceptionFactory,
     }),
   );
 
@@ -27,6 +32,12 @@ async function bootstrap() {
   // Configure Swagger
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api-docs', app, document, swaggerSetupOptions);
+
+  // Get Reflector from DI container for TransformInterceptor
+  const reflector = app.get(Reflector);
+  app.useGlobalInterceptors(new TransformInterceptor(reflector));
+
+  app.useGlobalFilters(new HttpExceptionFilter());
 
   await app.listen(process.env.PORT ?? 3000);
 }

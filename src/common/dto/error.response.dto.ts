@@ -16,9 +16,9 @@ export class ErrorResponseDto {
   message: string;
 
   @ApiProperty({
-    description: 'Error type',
-    example: 'Bad Request',
-    type: String,
+    example: [{ field: 'email', message: 'Email is invalid' }],
+    description: 'List of field errors if applicable',
+    required: false,
   })
-  error: string;
+  errors?: { field: string; message: string }[];
 }

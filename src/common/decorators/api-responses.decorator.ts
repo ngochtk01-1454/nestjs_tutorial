@@ -1,6 +1,7 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiExtraModels, ApiResponse, getSchemaPath } from '@nestjs/swagger';
 import { ErrorResponseDto } from '../dto/error.response.dto';
+import { SuccessResponseDto } from '../dto/success.response.dto';
 
 /**
  * Common API Error Responses decorator
@@ -9,22 +10,21 @@ export function ApiCommonErrors() {
   return applyDecorators(
     ApiResponse({
       status: 400,
-      description: 'Bad Request - Invalid input data',
+      description: 'Bad Request',
       type: ErrorResponseDto,
       example: {
         statusCode: 400,
-        message: ['Email must be a valid email address', 'Password is required'],
-        error: 'Bad Request'
+        message: 'Invalid input data',
+        errors: [{ field: 'email', message: 'Email is invalid' }],
       }
     }),
     ApiResponse({
       status: 401,
-      description: 'Unauthorized - Invalid credentials',
+      description: 'Unauthorized',
       type: ErrorResponseDto,
       example: {
         statusCode: 401,
         message: 'Invalid credentials',
-        error: 'Unauthorized'
       }
     }),
     ApiResponse({
@@ -34,8 +34,33 @@ export function ApiCommonErrors() {
       example: {
         statusCode: 500,
         message: 'Internal server error',
-        error: 'Internal Server Error'
       }
     })
   );
 }
+
+/**
+ * Common API Success Responses decorator
+ */
+export const ApiSuccessResponse = <TModel extends new (...args: any[]) => any>(
+  model: TModel,
+  description = 'Successful response',
+) => {
+  return applyDecorators(
+    ApiExtraModels(SuccessResponseDto, model),
+    ApiResponse({
+      status: 200,
+      description,
+      schema: {
+        allOf: [
+          { $ref: getSchemaPath(SuccessResponseDto) },
+          {
+            properties: {
+              data: { $ref: getSchemaPath(model) },
+            },
+          },
+        ],
+      },
+    }),
+  );
+};
