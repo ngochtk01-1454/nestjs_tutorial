@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { i18nValidationMessage } from 'nestjs-i18n';
 
 export class LoginRequestDto {
   @ApiProperty({
@@ -7,8 +8,8 @@ export class LoginRequestDto {
     example: 'test.user@example.com',
     type: String,
   })
-  @IsEmail({}, { message: 'Email must be a valid email address' })
-  @IsNotEmpty({ message: 'Email is required' })
+  @IsEmail({}, { message: i18nValidationMessage('validation.invalid') })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
   email: string;
 
   @ApiProperty({
@@ -16,7 +17,6 @@ export class LoginRequestDto {
     example: 'password123',
     type: String,
   })
-  @IsString({ message: 'Password must be a string' })
-  @IsNotEmpty({ message: 'Password is required' })
+  @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
   password: string;
 }

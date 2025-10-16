@@ -1,0 +1,4 @@
+{
+    "required": "{property} is required.",
+    "invalid": "{property} has invalid format."
+}
