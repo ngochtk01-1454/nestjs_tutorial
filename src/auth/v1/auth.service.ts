@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../../users/v1/users.service';
+import { LoginResponseDto } from '../dto/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -20,8 +21,12 @@ export class AuthService {
     throw new UnauthorizedException('Invalid credentials');
   }
 
-  async login(user: any) {
+  async login(user: any): Promise<LoginResponseDto> {
     const payload = { email: user.email, userId: user.id };
-    return this.jwtService.sign(payload);
+    const access_token = this.jwtService.sign(payload);
+
+    return {
+      access_token,
+    };
   }
 }

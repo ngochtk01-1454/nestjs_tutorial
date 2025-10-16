@@ -7,10 +7,7 @@ import { AuthService } from './auth.service';
 import { ResponseMessage } from 'src/common/decorators';
 
 @ApiTags('Authentication')
-@Controller({
-  path: 'auth',
-  version: '1',
-})
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
@@ -25,13 +22,7 @@ export class AuthController {
   @ApiCommonErrors()
   async login(@Body() loginDto: LoginRequestDto): Promise<LoginResponseDto> {
     const user = await this.authService.validateUser(loginDto.email, loginDto.password);
-    const access_token = await this.authService.login(user);
-
-    // create login response dto
-    const loginResponseDto: LoginResponseDto = {
-      access_token,
-    };
-
-    return loginResponseDto;
+    
+    return this.authService.login(user);
   }
 }
