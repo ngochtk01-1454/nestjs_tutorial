@@ -1,4 +1,4 @@
 {
-    "required": "{property} là bắt buộc.",
-    "invalid": "{property} có định dạng không hợp lệ."
+  "required": "{property} là bắt buộc.",
+  "invalid": "{property} có định dạng không hợp lệ."
 }

@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { VersioningType } from '@nestjs/common';
+import { HttpStatus, VersioningType } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { API_CONSTANTS } from './constants/api.constants';
 import { swaggerConfig, swaggerSetupOptions } from './config/swagger.config';
@@ -40,9 +40,16 @@ async function bootstrap() {
     new HttpExceptionFilter(),
     new I18nValidationExceptionFilter({
       errorFormatter: (errors) => errors.map((e) => ({
-          field: e.property,
-          message: Object.values(e.constraints || {})[0],
-      })),
+            field: e.property,
+            message: Object.values(e.constraints || {})[0],
+        })),
+      responseBodyFormatter: (host, exception, formattedErrors) => {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Bad Request',
+          errors: formattedErrors,
+        };
+      },
     }),
   );
 
