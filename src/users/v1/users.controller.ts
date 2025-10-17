@@ -4,6 +4,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserResponseDto } from '../dto/create-user-response.dto';
 import { ApiCommonErrors, ApiSuccessResponse } from 'src/common/decorators/api-responses.decorator';
 import { CreateUserRequestDto } from '../dto/create-user-request.dto';
+import { ResponseMessage } from 'src/common/decorators/response-message.decorator';
 
 @ApiTags('Users')
 @Controller('users')
@@ -12,6 +13,7 @@ export class UsersController {
 
   @Post()
   @HttpCode(HttpStatus.OK)
+  @ResponseMessage('User registered successfully')
   @ApiOperation({
     summary: 'User registration',
     description: 'Register a new user',

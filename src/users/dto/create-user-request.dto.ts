@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsEmail, IsNotEmpty, IsStrongPassword, MaxLength, MinLength } from "class-validator";
 import { i18nValidationMessage } from "nestjs-i18n";
 import { IsEmailUnique } from "src/common/decorators/is-email-unique.decorator";
+import { LENGTH, MIN_LENGTH } from "src/constants/length.constants";
 
 export class CreateUserRequestDto {
     @ApiProperty({
@@ -11,7 +12,7 @@ export class CreateUserRequestDto {
     })
     @IsEmail({}, { message: i18nValidationMessage('validation.invalid') })
     @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
-    @MaxLength(255, { message: i18nValidationMessage('validation.maxLength') })
+    @MaxLength(LENGTH.MAX_DEFAULT, { message: i18nValidationMessage('validation.maxLength') })
     @IsEmailUnique({ message: i18nValidationMessage('validation.email_taken') })
     email: string;
 
@@ -21,7 +22,7 @@ export class CreateUserRequestDto {
         type: String,
     })
     @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
-    @MinLength(8, { message: i18nValidationMessage('validation.minLength') })
+    @MinLength(MIN_LENGTH.PASSWORD, { message: i18nValidationMessage('validation.minLength') })
     @IsStrongPassword({}, { message: i18nValidationMessage('validation.invalid') })
     password: string;
     @ApiProperty({
@@ -36,6 +37,6 @@ export class CreateUserRequestDto {
         type: String,
     })
     @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
-    @MaxLength(255, { message: i18nValidationMessage('validation.maxLength') })
+    @MaxLength(LENGTH.MAX_DEFAULT, { message: i18nValidationMessage('validation.maxLength') })
     username: string;
 }

@@ -1,15 +1,16 @@
 import { ArticleComments } from "src/article_comments/entities/article_comments.entity";
 import { Article } from "src/articles/entities/article.entity";
 import { BaseEntity } from "src/common/entities/base.entity";
+import { LENGTH } from "src/constants/length.constants";
 import { UserArticleFavorites } from "src/user_article_favorites/entities/user_article_favorites.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User extends BaseEntity {
-  @Column({ length: 255 })
+  @Column({ length: LENGTH.MAX_DEFAULT })
   name: string;
 
-  @Column({ unique: true, length: 255 })
+  @Column({ unique: true, length: LENGTH.MAX_DEFAULT })
   email: string;
 
   @Column()
