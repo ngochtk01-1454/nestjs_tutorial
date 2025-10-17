@@ -1,4 +1,8 @@
 {
   "required": "{property} là bắt buộc.",
-  "invalid": "{property} có định dạng không hợp lệ."
+  "invalid": "{property} có định dạng không hợp lệ.",
+  "minLength": "{property} phải có ít nhất {min} ký tự.",
+  "maxLength": "{property} phải có tối đa {max} ký tự.",
+  "strong_password": "{property} phải có ít nhất 8 ký tự và chứa chữ hoa, chữ thường, số và ký tự đặc biệt.",
+  "email_taken": "Địa chỉ email đã được sử dụng."
 }

@@ -8,9 +8,10 @@ import { swaggerConfig, swaggerSetupOptions } from './config/swagger.config';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
+import { useContainer } from 'class-validator';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'debug', 'log'] });
 
   app.setGlobalPrefix(API_CONSTANTS.PREFIX);
 
@@ -52,6 +53,8 @@ async function bootstrap() {
       },
     }),
   );
+
+  useContainer(app.select(AppModule), { fallbackOnErrors: true });
 
   await app.listen(process.env.PORT ?? 3000);
 }
