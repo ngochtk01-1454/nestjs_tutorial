@@ -1,4 +1,8 @@
 {
   "required": "{property} is required.",
-  "invalid": "{property} has invalid format."
+  "invalid": "{property} has invalid format.",
+  "minLength": "{property} must be at least {min} characters long.",
+  "maxLength": "{property} must be at most {max} characters long.",
+  "strong_password": "{property} must be at least 8 characters long and contain uppercase, lowercase, numeric, and special characters.",
+  "email_taken": "The email address is already in use."
 }

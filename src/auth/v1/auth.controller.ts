@@ -13,7 +13,7 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ResponseMessage('Login successful11')
+  @ResponseMessage('Login successfully')
   @ApiOperation({
     summary: 'User login',
     description: 'Authenticate user with email and password to get JWT access token',
