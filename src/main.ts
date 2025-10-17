@@ -1,13 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe, VersioningType, BadRequestException } from '@nestjs/common';
+import { HttpStatus, VersioningType } from '@nestjs/common';
 import { SwaggerModule } from '@nestjs/swagger';
 import { API_CONSTANTS } from './constants/api.constants';
 import { swaggerConfig, swaggerSetupOptions } from './config/swagger.config';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
-import { validationExceptionFactory } from './common/exceptions/validation-exception.factory';
+import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -15,11 +15,10 @@ async function bootstrap() {
   app.setGlobalPrefix(API_CONSTANTS.PREFIX);
 
   app.useGlobalPipes(
-    new ValidationPipe({
+    new I18nValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
       transform: true,
-      exceptionFactory: validationExceptionFactory,
     }),
   );
 
@@ -37,7 +36,22 @@ async function bootstrap() {
   const reflector = app.get(Reflector);
   app.useGlobalInterceptors(new TransformInterceptor(reflector));
 
-  app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(
+    new HttpExceptionFilter(),
+    new I18nValidationExceptionFilter({
+      errorFormatter: (errors) => errors.map((e) => ({
+            field: e.property,
+            message: Object.values(e.constraints || {})[0],
+        })),
+      responseBodyFormatter: (host, exception, formattedErrors) => {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Bad Request',
+          errors: formattedErrors,
+        };
+      },
+    }),
+  );
 
   await app.listen(process.env.PORT ?? 3000);
 }

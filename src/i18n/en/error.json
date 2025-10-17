@@ -1,0 +1,5 @@
+{
+  "unauthorized": "Invalid credentials.",
+  "forbidden": "Access denied.",
+  "not_found": "Resource not found."
+}

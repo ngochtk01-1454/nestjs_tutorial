@@ -15,6 +15,15 @@ export const swaggerConfig = new DocumentBuilder()
     },
     'JWT-auth',
   )
+  .addGlobalParameters({
+      name: 'Accept-Language',
+      in: 'header',
+      required: false,
+      schema: {
+        type: 'string',
+        default: 'en',
+      },
+    })
   .build();
 
 export const swaggerSetupOptions = {

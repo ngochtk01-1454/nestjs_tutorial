@@ -3,12 +3,14 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { UsersService } from '../../users/v1/users.service';
 import { LoginResponseDto } from '../dto/login-response.dto';
+import { I18nService } from 'nestjs-i18n';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
+    private i18nService: I18nService
   ) {}
 
   async validateUser(email: string, password: string) {
@@ -18,7 +20,7 @@ export class AuthService {
 
       return result;
     }
-    throw new UnauthorizedException('Invalid credentials');
+    throw new UnauthorizedException(this.i18nService.t('error.unauthorized'));
   }
 
   async login(user: any): Promise<LoginResponseDto> {
