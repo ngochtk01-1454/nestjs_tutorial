@@ -1,4 +1,4 @@
-import { Controller, Post, Body, HttpStatus, HttpCode, Put, Param, UseGuards, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Post, Body, HttpStatus, HttpCode, Put, Param, UseGuards, UseInterceptors, UploadedFile, Get } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserResponseDto } from '../dto/create-user-response.dto';
@@ -56,5 +56,19 @@ export class UsersController {
   })
   update(@CurrentUser() user: any, @Body() updateUserDto: UpdateUserRequestDto, @UploadedFile() file: Multer.File): Promise<UserResponseDto> {
     return this.usersService.update(user.userId, updateUserDto, file.buffer);
+  }
+
+  @Get(':id')
+  @HttpCode(HttpStatus.OK)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOperation({
+    summary: 'Get user by ID',
+    description: 'Retrieve information about a user by their ID',
+  })
+  @ApiSuccessResponse(UserResponseDto)
+  @ApiCommonErrors()
+  @UseGuards(JwtAuthGuard)
+  async getUserById(@Param('id') id: number): Promise<UserResponseDto> {
+    return this.usersService.findById(id);
   }
 }
