@@ -7,7 +7,8 @@ import { CreateUserResponseDto } from '../dto/create-user-response.dto';
 import { CreateUserRequestDto } from '../dto/create-user-request.dto';
 import { I18nService } from 'nestjs-i18n';
 import { UserMapper } from '../mappers/user.mapper';
-import { CurrentUserResponseDto } from 'src/auth/dto/current-user-response.dto';
+import { UpdateUserRequestDto } from '../dto/update-user-request.dto';
+import { UserResponseDto } from '../dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -30,7 +31,7 @@ export class UsersService {
     };
   }
 
-  async findById(id: number): Promise<CurrentUserResponseDto> {
+  async findById(id: number): Promise<UserResponseDto> {
     const userEntity = await this.usersRepository.findOne({ where: { id } });
 
     if (!userEntity) {
@@ -39,6 +40,23 @@ export class UsersService {
 
     return {
       user: UserMapper.toUserResponse(userEntity)
+    };
+  }
+
+  async update(id: number, updateUserDto: UpdateUserRequestDto, avatar: Buffer): Promise<UserResponseDto> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+
+    if (!user) {
+      throw new NotFoundException(this.i18nService.t('error.not_found'));
+    }
+
+    Object.assign(user, updateUserDto);
+    user.avatar = avatar;
+    user.name = updateUserDto.username;
+    const userUpdated = await this.usersRepository.save(user);
+
+    return {
+      user: UserMapper.toUserResponse(userUpdated)
     };
   }
 }
