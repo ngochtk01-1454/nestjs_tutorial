@@ -44,6 +44,6 @@ export class AuthController {
   @ApiCommonErrors()
   @UseGuards(JwtAuthGuard)
   async getCurrentUser(@CurrentUser() user: any): Promise<UserResponseDto> {
-    return this.userService.findById(user.userId);
+    return this.userService.get(user.userId);
   }
 }

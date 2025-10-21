@@ -31,12 +31,8 @@ export class UsersService {
     };
   }
 
-  async findById(id: number): Promise<UserResponseDto> {
-    const userEntity = await this.usersRepository.findOne({ where: { id } });
-
-    if (!userEntity) {
-      throw new NotFoundException(this.i18nService.t('error.not_found'));
-    }
+  async get(id: number): Promise<UserResponseDto> {
+    const userEntity = await this.findById(id);
 
     return {
       user: UserMapper.toUserResponse(userEntity)
@@ -44,19 +40,25 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserRequestDto, avatar: Buffer): Promise<UserResponseDto> {
-    const user = await this.usersRepository.findOne({ where: { id } });
+    const userEntity = await this.findById(id);
 
-    if (!user) {
-      throw new NotFoundException(this.i18nService.t('error.not_found'));
-    }
-
-    Object.assign(user, updateUserDto);
-    user.avatar = avatar;
-    user.name = updateUserDto.username;
-    const userUpdated = await this.usersRepository.save(user);
+    Object.assign(userEntity, updateUserDto);
+    userEntity.avatar = avatar;
+    userEntity.name = updateUserDto.username;
+    const userUpdated = await this.usersRepository.save(userEntity);
 
     return {
       user: UserMapper.toUserResponse(userUpdated)
     };
+  }
+
+  private async findById(id: number): Promise<User> {
+    const userEntity = await this.usersRepository.findOne({ where: { id } });
+
+    if (!userEntity) {
+      throw new NotFoundException(this.i18nService.t('error.not_found'));
+    }
+
+    return userEntity;
   }
 }

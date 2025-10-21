@@ -69,6 +69,6 @@ export class UsersController {
   @ApiCommonErrors()
   @UseGuards(JwtAuthGuard)
   async getUserById(@Param('id') id: number): Promise<UserResponseDto> {
-    return this.usersService.findById(id);
+    return this.usersService.get(id);
   }
 }

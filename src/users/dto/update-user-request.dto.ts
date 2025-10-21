@@ -13,15 +13,10 @@ export class UpdateUserRequestDto {
     @MinLength(MIN_LENGTH.PASSWORD, { message: i18nValidationMessage('validation.minLength') })
     @IsStrongPassword({}, { message: i18nValidationMessage('validation.invalid') })
     password: string;
+
     @ApiProperty({
         description: 'Username',
         example: 'testuser',
-        type: String,
-    })
-
-    @ApiProperty({
-        description: 'User name',
-        example: 'John Doe',
         type: String,
     })
     @IsNotEmpty({ message: i18nValidationMessage('validation.required') })
