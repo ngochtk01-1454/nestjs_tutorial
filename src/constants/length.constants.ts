@@ -5,4 +5,5 @@ export const MIN_LENGTH = {
 
 export const LENGTH = {
   MAX_DEFAULT: 255,
+  BIO: 500
 } as const;
