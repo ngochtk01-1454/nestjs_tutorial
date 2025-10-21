@@ -9,9 +9,15 @@ import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { I18nValidationExceptionFilter, I18nValidationPipe } from 'nestjs-i18n';
 import { useContainer } from 'class-validator';
+import { addTransactionalDataSource, initializeTransactionalContext } from 'typeorm-transactional';
+import { DataSource } from 'typeorm';
 
 async function bootstrap() {
+  initializeTransactionalContext(); // Initialize transactional context for typeorm-transactional 
   const app = await NestFactory.create(AppModule, { logger: ['error', 'warn', 'debug', 'log'] });
+
+  const dataSource = app.get(DataSource);
+  addTransactionalDataSource(dataSource);
 
   app.setGlobalPrefix(API_CONSTANTS.PREFIX);
 
