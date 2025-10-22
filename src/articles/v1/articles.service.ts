@@ -28,32 +28,10 @@ export class ArticlesService {
             throw new Error(this.i18nService.t('error.not_found'));
         }
 
-        // Generate unique slug from title
-        const baseSlug = SlugUtils.generateSlug(createArticleDto.title);
-        const existingSlugs = await this.articlesRepository
-            .createQueryBuilder('article')
-            .select('article.slug')
-            .where('article.slug LIKE :slug', { slug: `${baseSlug}%` })
-            .getRawMany();
-        
-        const slugs = existingSlugs.map(item => item.article_slug);
-        const uniqueSlug = SlugUtils.generateUniqueSlug(createArticleDto.title, slugs);
+        const uniqueSlug = SlugUtils.generateUniqueSlug(createArticleDto.title);
 
         // Handle tags - find existing or create new ones
-        const tags: Tag[] = [];
-        if (createArticleDto.tagList && createArticleDto.tagList.length > 0) {
-            for (const tagName of createArticleDto.tagList) {
-                let tag = await this.tagsRepository.findOne({ where: { name: tagName } });
-                
-                if (!tag) {
-                    // Create new tag if it doesn't exist
-                    tag = this.tagsRepository.create({ name: tagName });
-                    await this.tagsRepository.save(tag);
-                }
-                
-                tags.push(tag);
-            }
-        }
+        const tags: Tag[] = await this.findOrCreateTag(createArticleDto.tagList || []);
 
         // Create the article
         const article = this.articlesRepository.create({
@@ -82,5 +60,24 @@ export class ArticlesService {
         const articleDto = ArticleMapper.toDto(articleWithRelations, authorId);
         
         return { article: articleDto };
+    }
+
+    private async findOrCreateTag(tagList: string[]): Promise<Tag[]> {
+        const tags: Tag[] = [];
+        if (tagList && tagList.length > 0) {
+            for (const tagName of tagList) {
+                let tag = await this.tagsRepository.findOne({ where: { name: tagName } });
+                
+                if (!tag) {
+                    // Create new tag if it doesn't exist
+                    tag = this.tagsRepository.create({ name: tagName });
+                    await this.tagsRepository.save(tag);
+                }
+                
+                tags.push(tag);
+            }
+        }
+
+        return tags;
     }
 }

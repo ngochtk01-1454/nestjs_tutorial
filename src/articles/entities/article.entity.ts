@@ -1,5 +1,6 @@
 import { ArticleComments } from "src/article_comments/entities/article_comments.entity";
 import { BaseEntity } from "src/common/entities/base.entity";
+import { LENGTH } from "src/constants/length.constants";
 import { Tag } from "src/tags/entities/tag.entity";
 import { UserArticleFavorites } from "src/user_article_favorites/entities/user_article_favorites.entity";
 import { User } from "src/users/entities/user.entity";
@@ -7,13 +8,13 @@ import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany
 
 @Entity()
 export class Article extends BaseEntity {
-  @Column({ length: 255, unique: true })
+  @Column({ length: LENGTH.MAX_DEFAULT, unique: true })
   slug: string;
 
-  @Column({ length: 255 })
+  @Column({ length: LENGTH.MAX_DEFAULT })
   title: string;
-  
-  @Column({ length: 255 })
+
+  @Column({ length: LENGTH.MAX_DEFAULT })
   description: string;
 
   @Column({ type: 'text' })

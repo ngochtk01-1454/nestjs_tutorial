@@ -18,15 +18,10 @@ export class SlugUtils {
   /**
    * Generate a unique slug by appending a random suffix if needed
    * @param title - The title to convert to slug
-   * @param existingSlugs - Array of existing slugs to avoid duplicates
    * @returns The generated unique slug
    */
-  static generateUniqueSlug(title: string, existingSlugs: string[] = []): string {
+  static generateUniqueSlug(title: string): string {
     const baseSlug = this.generateSlug(title);
-    
-    if (!existingSlugs.includes(baseSlug)) {
-      return baseSlug;
-    }
 
     // Add random suffix to make it unique
     const randomSuffix = Math.random().toString(36).substring(2, 8);
