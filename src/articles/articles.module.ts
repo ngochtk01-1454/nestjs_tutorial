@@ -5,9 +5,10 @@ import { ArticlesController } from './v1/articles.controller';
 import { Article } from './entities/article.entity';
 import { Tag } from '../tags/entities/tag.entity';
 import { User } from '../users/entities/user.entity';
+import { UserArticleFavorites } from '../user_article_favorites/entities/user_article_favorites.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Article, Tag, User])],
+  imports: [TypeOrmModule.forFeature([Article, Tag, User, UserArticleFavorites])],
   controllers: [ArticlesController],
   providers: [ArticlesService],
 })

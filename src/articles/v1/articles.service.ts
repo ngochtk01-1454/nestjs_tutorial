@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { Article } from '../entities/article.entity';
-import { Repository } from 'typeorm';
+import { Repository, SelectQueryBuilder } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ArticleResponseDto } from '../dto/article-response.dto';
 import { CreateArticleRequestDto } from '../dto/create-article-request.dto';
+import { GetArticlesQueryDto } from '../dto/get-articles-query.dto';
+import { ArticlesResponseDto } from '../dto/articles-response.dto';
 import { Tag } from '../../tags/entities/tag.entity';
 import { User } from '../../users/entities/user.entity';
 import { ArticleMapper } from '../mapper/article.mapper';
@@ -80,4 +82,64 @@ export class ArticlesService {
 
         return tags;
     }
+
+    async findAll(
+        query: GetArticlesQueryDto,
+        currentUserId?: number,
+    ): Promise<ArticlesResponseDto> {
+        const { tag, author, favorited, limit = 20, offset = 0 } = query;
+
+        const qb = this.articlesRepository
+            .createQueryBuilder('article')
+            .innerJoinAndSelect('article.author', 'author')
+            .leftJoinAndSelect('article.tags', 'tags')
+            .leftJoinAndSelect('article.userArticleFavorites', 'favorites')
+            .leftJoinAndSelect('favorites.user', 'favoritesUser')
+            .orderBy('article.createdAt', 'DESC');
+  
+
+        this.applyFilters(qb, currentUserId, { tag, author, favorited });
+
+        const [articles, totalCount] = await qb
+            .skip(offset)
+            .take(limit)
+            .getManyAndCount();
+
+        const articleDtos = articles.map(article =>
+            ArticleMapper.toDto(article, currentUserId),
+        );
+
+        return { articles: articleDtos, articlesCount: totalCount };
+    }
+
+    private applyFilters(
+        qb: SelectQueryBuilder<Article>,
+        currentUserId: number | undefined,
+        filters: { tag?: string; author?: string; favorited?: boolean }
+    ) {
+        const { tag, author, favorited } = filters;
+ 
+        if (tag) {
+            qb.andWhere(qb2 => {
+            const subQuery = qb2
+                .subQuery()
+                .select('1')
+                .from('article_tags', 'at')
+                .innerJoin('tag', 't', 'at.tag_id = t.id')
+                .where('at.article_id = article.id')
+                .andWhere('t.name = :tag')
+                .getQuery();
+            return `EXISTS ${subQuery}`;
+            }, { tag });
+        }
+
+        if (author) {
+            qb.andWhere('author.name = :author', { author });
+        }
+
+        if (favorited && currentUserId) {
+            qb.andWhere('favoritesUser.id = :currentUserId', { currentUserId });
+        }
+    }
+
 }

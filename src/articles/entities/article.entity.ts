@@ -24,10 +24,10 @@ export class Article extends BaseEntity {
   @JoinColumn({ name: 'author_id' })
   author: User;
   
-  @OneToMany(() => ArticleComments, (uc) => uc.user)
+  @OneToMany(() => ArticleComments, (comment) => comment.article)
   comments: ArticleComments[];
 
-  @OneToMany(() => UserArticleFavorites, (uc) => uc.user)
+  @OneToMany(() => UserArticleFavorites, (favorite) => favorite.article)
   userArticleFavorites: UserArticleFavorites[];
 
   @ManyToMany(() => Tag, { cascade: true })
