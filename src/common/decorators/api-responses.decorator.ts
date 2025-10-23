@@ -40,7 +40,7 @@ export function ApiCommonErrors() {
 }
 
 /**
- * Common API Success Responses decorator
+ * Common API Success Responses decorator with data
  */
 export const ApiSuccessResponse = <TModel extends new (...args: any[]) => any>(
   model: TModel,
@@ -64,3 +64,21 @@ export const ApiSuccessResponse = <TModel extends new (...args: any[]) => any>(
     }),
   );
 };
+
+/**
+ * Simple API Success Response decorator (only statusCode and message)
+ */
+export function ApiSimpleSuccessResponse(description = 'Successfully') {
+  return applyDecorators(
+    ApiExtraModels(SuccessResponseDto),
+    ApiResponse({
+      status: 200,
+      description: 'Successful response',
+      type: SuccessResponseDto,
+      example: {
+        statusCode: 200,
+        message: description,
+      }
+    })
+  );
+}
