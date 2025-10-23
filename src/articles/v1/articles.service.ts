@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { Article } from '../entities/article.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
@@ -142,4 +142,18 @@ export class ArticlesService {
         }
     }
 
+    async findBySlug(slug: string, currentUserId?: number): Promise<ArticleResponseDto> {
+        const article = await this.articlesRepository.findOne({
+            where: { slug },
+            relations: ['author', 'tags', 'userArticleFavorites', 'userArticleFavorites.user'],
+        });
+
+        if (!article) {
+            throw new NotFoundException(this.i18nService.t('error.not_found'));
+        }
+
+        const articleDto = ArticleMapper.toDto(article, currentUserId);
+
+        return { article: articleDto };
+    }
 }

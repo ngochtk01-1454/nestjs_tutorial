@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, HttpCode, HttpStatus, UseGuards, Query, Param } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { ApiCommonErrors, ApiSuccessResponse, ResponseMessage } from 'src/common/decorators';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -48,5 +48,23 @@ export class ArticlesController {
     @CurrentUser() user?: any
   ): Promise<ArticlesResponseDto> {
     return this.articlesService.findAll(query, user?.userId);
+  }
+
+  @Get(':slug')
+  @UseGuards(OptionalJwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ResponseMessage('')
+  @ApiOperation({
+    summary: 'Get article by slug',
+    description: 'Returns a single article by its slug. No authentication required.',
+  })
+  @ApiBearerAuth('JWT-auth')
+  @ApiSuccessResponse(ArticleResponseDto)
+  @ApiCommonErrors()
+  get(
+    @Param('slug') slug: string,
+    @CurrentUser() user?: any
+  ): Promise<ArticleResponseDto> {
+    return this.articlesService.findBySlug(slug, user?.userId);
   }
 }
