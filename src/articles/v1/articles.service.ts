@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { I18nService } from 'nestjs-i18n';
 import { Article } from '../entities/article.entity';
 import { Repository, SelectQueryBuilder } from 'typeorm';
@@ -12,6 +12,7 @@ import { User } from '../../users/entities/user.entity';
 import { ArticleMapper } from '../mapper/article.mapper';
 import { SlugUtils } from '../../common/utils/slug.utils';
 import { Transactional } from 'typeorm-transactional';
+import { UpdateArticleRequestDto } from '../dto/update-article-request.dto';
 
 @Injectable()
 export class ArticlesService {
@@ -143,17 +144,59 @@ export class ArticlesService {
     }
 
     async findBySlug(slug: string, currentUserId?: number): Promise<ArticleResponseDto> {
-        const article = await this.articlesRepository.findOne({
-            where: { slug },
-            relations: ['author', 'tags', 'userArticleFavorites', 'userArticleFavorites.user'],
-        });
-
-        if (!article) {
-            throw new NotFoundException(this.i18nService.t('error.not_found'));
-        }
+        const article = await this.findOneBySlug(slug);
 
         const articleDto = ArticleMapper.toDto(article, currentUserId);
 
         return { article: articleDto };
+    }
+
+    async update(slug: string, updateArticleDto: UpdateArticleRequestDto, currentUserId: number): Promise<ArticleResponseDto> {
+        const article = await this.findOneBySlug(slug);
+
+        // Check if the current user is the author
+        if (article.author.id !== currentUserId) {
+            throw new ForbiddenException(this.i18nService.t('error.forbidden'));
+        }
+
+        // Update article properties
+        Object.entries(updateArticleDto).forEach(([key, value]) => {
+            if (value !== undefined) {
+                (article as any)[key] = value;
+            }
+        });
+        if (updateArticleDto.title) {
+            article.slug = SlugUtils.generateUniqueSlug(updateArticleDto.title);
+        }
+
+        await this.articlesRepository.save(article);
+
+        const articleDto = ArticleMapper.toDto(article, currentUserId);
+
+        return { article: articleDto };
+    }
+
+    private async findOneBySlug(slug: string): Promise<Article> {
+        const article = await this.articlesRepository.findOne({
+            where: { slug },
+            relations: ['author', 'tags', 'userArticleFavorites', 'userArticleFavorites.user'],
+        });
+        
+        if (!article) {
+            throw new NotFoundException(this.i18nService.t('error.not_found'));
+        }
+
+        return article;
+    }
+
+    async delete(slug: string, currentUserId: number): Promise<void> {
+        const article = await this.findOneBySlug(slug);
+        
+        // Check if the current user is the author
+        if (article.author.id !== currentUserId) {
+            throw new ForbiddenException(this.i18nService.t('error.forbidden'));
+        }
+        
+        await this.articlesRepository.remove(article);
     }
 }
