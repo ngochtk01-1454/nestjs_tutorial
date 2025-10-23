@@ -18,5 +18,5 @@ export class SuccessResponseDto <T = any> {
   @ApiProperty({
     description: 'Data returned in the response',
   })
-  data: T;
+  data?: T;
 }
