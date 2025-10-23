@@ -70,7 +70,7 @@ export class ArticleDto {
     // Check if current user favorited this article
     const currentUserId = (options as any)?.currentUserId;
     if (!currentUserId || !obj.userArticleFavorites) return false;
-    return obj.userArticleFavorites.some((fav: any) => fav.userId === currentUserId);
+    return obj.userArticleFavorites.some((fav: any) => fav.user.id === currentUserId);
   })
   favorited: boolean;
 

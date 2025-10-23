@@ -8,3 +8,8 @@ export const LANGUAGE = {
   EN: 'en',
   VI: 'vi',
 } as const;
+
+export const PAGINATION = {
+  LIMIT: 20,
+  OFFSET: 0
+} as const;

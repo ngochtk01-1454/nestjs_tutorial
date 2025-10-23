@@ -45,6 +45,7 @@ export class UsersService {
     Object.assign(userEntity, updateUserDto);
     userEntity.avatar = avatar;
     userEntity.name = updateUserDto.username;
+    userEntity.password = updateUserDto.password ? await bcrypt.hash(updateUserDto.password, 10) : userEntity.password;
     const userUpdated = await this.usersRepository.save(userEntity);
 
     return {
