@@ -2,5 +2,6 @@
   "unauthorized": "Invalid credentials.",
   "forbidden": "Access denied.",
   "not_found": "Resource not found.",
-  "save_article_error": "Failed to retrieve saved article"
+  "save_article_error": "Failed to retrieve saved article",
+  "save_comment_error": "Failed to retrieve saved comment"
 }

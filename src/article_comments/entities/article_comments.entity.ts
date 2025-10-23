@@ -13,6 +13,6 @@ export class ArticleComments extends BaseEntity {
   @JoinColumn({ name: 'article_id' })
   article: Article;
 
-  @Column()
-  comment: string;
+  @Column({ type: 'text' })
+  body: string;
 }
