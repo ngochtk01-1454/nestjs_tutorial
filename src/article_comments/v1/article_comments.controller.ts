@@ -40,8 +40,8 @@ export class ArticleCommentsController {
   create(
     @Param('slug') slug: string,
     @Body() createCommentDto: CreateCommentRequestDto,
-    @CurrentUser() user: User,
+    @CurrentUser() user: any,
   ): Promise<CommentResponseDto> {
-    return this.articleCommentsService.create(slug, createCommentDto, user.id);
+    return this.articleCommentsService.create(slug, createCommentDto, user.userId);
   }
 }
