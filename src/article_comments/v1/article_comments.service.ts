@@ -10,18 +10,16 @@ import { CommentsResponseDto } from '../dto/comments-response.dto';
 import { CommentMapper } from '../mapper/comment.mapper';
 import { CreateCommentRequestDto } from '../dto/create-comment-request.dto';
 import { ArticlesService } from 'src/articles/v1/articles.service';
+import { UsersService } from 'src/users/v1/users.service';
 
 @Injectable()
 export class ArticleCommentsService {
   constructor(
     @InjectRepository(ArticleComments)
     private commentsRepository: Repository<ArticleComments>,
-    @InjectRepository(Article)
-    private articlesRepository: Repository<Article>,
-    @InjectRepository(User)
-    private usersRepository: Repository<User>,
     private i18nService: I18nService,
-    private articleService: ArticlesService
+    private articleService: ArticlesService,
+    private userService: UsersService
   ) {}
 
   async create(
@@ -30,16 +28,9 @@ export class ArticleCommentsService {
     userId: number,
   ): Promise<CommentResponseDto> {
     // Find the article by slug
-    const article = await this.articleService.findOneBySlug(slug);
-
+    const article = await this.articleService.findOneBySlug(slug)
     // Find the user
-    const user = await this.usersRepository.findOne({
-      where: { id: userId },
-    });
-
-    if (!user) {
-      throw new NotFoundException(this.i18nService.t('error.not_found'));
-    }
+    const user = await this.userService.findById(userId);
 
     // Create the comment
     const comment = this.commentsRepository.create({

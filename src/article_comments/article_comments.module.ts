@@ -6,11 +6,12 @@ import { ArticleComments } from './entities/article_comments.entity';
 import { Article } from '../articles/entities/article.entity';
 import { User } from '../users/entities/user.entity';
 import { ArticlesService } from 'src/articles/v1/articles.service';
+import { UsersService } from 'src/users/v1/users.service';
 import { Tag } from 'src/tags/entities/tag.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ArticleComments, Article, User, Tag])],
   controllers: [ArticleCommentsController],
-  providers: [ArticleCommentsService, ArticlesService],
+  providers: [ArticleCommentsService, ArticlesService, UsersService],
 })
 export class ArticleCommentsModule {}
