@@ -176,7 +176,7 @@ export class ArticlesService {
         return { article: articleDto };
     }
 
-    private async findOneBySlug(slug: string): Promise<Article> {
+    async findOneBySlug(slug: string): Promise<Article> {
         const article = await this.articlesRepository.findOne({
             where: { slug },
             relations: ['author', 'tags', 'userArticleFavorites', 'userArticleFavorites.user'],

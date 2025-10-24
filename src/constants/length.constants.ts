@@ -5,5 +5,6 @@ export const MIN_LENGTH = {
 
 export const LENGTH = {
   MAX_DEFAULT: 255,
-  BIO: 500
+  BIO: 500,
+  COMMENT: 1000,
 } as const;
