@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { ArticlesModule } from './articles/articles.module';
 import { ArticleCommentsModule } from './article_comments/article_comments.module';
+import { UserArticleFavoritesModule } from './user_article_favorites/user_article_favorites.module';
 import { AuthModule } from './auth/auth.module';
 import { i18nConfig } from './config/i18n.config';
 
@@ -15,6 +16,7 @@ import { i18nConfig } from './config/i18n.config';
     UsersModule,
     ArticlesModule,
     ArticleCommentsModule,
+    UserArticleFavoritesModule,
     AuthModule,
   ],
   controllers: [],
